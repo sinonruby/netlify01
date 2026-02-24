@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwipeStation - EDU</title>
+  <!-- Font Awesome 6 (free) for clean icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b0f17 0%, #1a1f2e 100%);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* main card – SwipeStation container */
+    .station {
+      max-width: 420px;
+      width: 100%;
+      background: rgba(18, 22, 36, 0.75);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 3.5rem 3.5rem 2.5rem 2.5rem;
+      box-shadow: 0 35px 65px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+      padding: 2rem 1.5rem 2rem 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    /* header with brand */
+    .swipe-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding: 0 0.25rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .logo-icon {
+      background: #4f46e5;
+      background: linear-gradient(135deg, #6c63ff, #4f46e5);
+      width: 42px;
+      height: 42px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 18px -8px rgba(79, 70, 229, 0.5);
+    }
+
+    .logo-icon i {
+      font-size: 1.8rem;
+      color: white;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+    }
+
+    .logo-text h1 {
+      color: white;
+      font-weight: 600;
+      font-size: 1.7rem;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: #a9b4d4;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-top: -2px;
+    }
+
+    .battery-icon {
+      color: #96a3c4;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.5rem 0.7rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* progress / swipe indicator */
+    .swipe-progress {
+      background: rgba(10, 14, 23, 0.6);
+      border-radius: 100px;
+      height: 6px;
+      width: 100%;
+      margin: 1.5rem 0 1.8rem 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 68%;
+      height: 100%;
+      background: linear-gradient(90deg, #6c63ff, #a78bfa);
+      border-radius: 100px;
+      box-shadow: 0 0 10px #6c63ff88;
+    }
+
+    /* main card — the swipeable card */
+    .card {
+      background: #1e2335;
+      border-radius: 2.5rem;
+      padding: 1.8rem 1.5rem 1.8rem 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 25px 40px -15px black;
+      margin-bottom: 2rem;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.01) translateY(-3px);
+      box-shadow: 0 30px 50px -12px #000000dd;
+      border-color: rgba(168, 139, 250, 0.3);
+    }
+
+    .card-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #b9c2e6;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-badge i {
+      color: #6c63ff;
+    }
+
+    .card-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      color: #9ca8cf;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-desc i {
+      color: #4f46e5;
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #2b3147;
+      padding-top: 1.2rem;
+      margin-top: 0.2rem;
+    }
+
+    .price-tag {
+      background: #0e121f;
+      padding: 0.4rem 1rem;
+      border-radius: 60px;
+      color: #c1cdff;
+      font-weight: 500;
+      font-size: 1.2rem;
+      letter-spacing: -0.2px;
+      border: 1px solid #2f3650;
+    }
+
+    .price-tag small {
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: #7b87b5;
+    }
+
+    .trend {
+      color: #73f7a6;
+      background: #1c3a2e;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* swipe actions (like / dislike) */
+    .swipe-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      margin: 1.2rem 0 1rem 0;
+    }
+
+    .action-btn {
+      background: #22283e;
+      border: none;
+      width: 65px;
+      height: 65px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 12px 25px -5px #00000080, 0 0 0 1px #2f3655 inset;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .action-btn.nope:hover {
+      background: #462b36;
+      color: #ff8a9f;
+      box-shadow: 0 0 15px #f5426c80, 0 0 0 1px #ff7b9c inset;
+    }
+
+    .action-btn.like:hover {
+      background: #2b3a45;
+      color: #6ef0b0;
+      box-shadow: 0 0 15px #31e59580, 0 0 0 1px #7af7b0 inset;
+    }
+
+    .action-btn i {
+      filter: drop-shadow(0 2px 3px black);
+    }
+
+    /* optional extra deck indicator */
+    .swipe-stack {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: #7b87af;
+      font-size: 0.9rem;
+      margin: 1rem 0 0.5rem 0;
+    }
+
+    .stack-dots {
+      display: flex;
+      gap: 8px;
+      margin-left: 8px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 10px;
+      background: #3b4363;
+    }
+
+    .dot.active {
+      background: #a18eff;
+      width: 18px;
+    }
+
+    /* footer */
+    .footer-note {
+      color: #5b6488;
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 1.5rem;
+      letter-spacing: 0.3px;
+      border-top: 1px solid #232841;
+      padding-top: 1.2rem;
+    }
+
+    .footer-note i {
+      color: #6c63ff;
+    }
+
+    /* some micro interactions */
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* responsiveness */
+    @media (max-width: 450px) {
+      .station {
+        padding: 1.5rem 1rem;
+        border-radius: 2.5rem;
+      }
+      .card-title {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="station">
+    <!-- header: swipe station identity -->
+    <div class="swipe-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div class="logo-text">
+          <h1>SwipeStation <span>discover · tap · go</span></h1>
+        </div>
+      </div>
+      <div class="battery-icon">
+        <i class="fa-solid fa-wifi"></i> <i class="fa-regular fa-bell" style="margin-left: 6px;"></i>
+      </div>
+    </div>
+
+    <!-- dynamic progress (static, but looks like you're halfway) -->
+    <div class="swipe-progress">
+      <div class="progress-fill"></div>
+    </div>
+
+    <!-- main card – the “swipeable” item (static demo) -->
+    <div class="card">
+      <div class="card-badge">
+        <i class="fa-solid fa-crown" style="color: #f5b042;"></i> <span>featured pick</span>
+        <i class="fa-regular fa-clock" style="margin-left: auto; color: #7886b5;"></i> <span>5 min ago</span>
+      </div>
+      <div class="card-title">
+        Urban Apex <br>Pro Fleet
+      </div>
+      <div class="card-desc">
+        <i class="fa-solid fa-location-dot"></i> Williamsburg · 2.3 mi away
+        <span style="margin-left: auto; background: #2b314a; padding: 0.2rem 0.7rem; border-radius: 30px;">⚡ 9.4</span>
+      </div>
+      <!-- some dummy attributes (like cards have multiple specs) -->
+      <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+        <span style="background:#262d47; padding:0.3rem 1rem; border-radius:50px; color:#b2bdff; font-size:0.75rem;"><i class="fa-regular fa-star"></i> 4.9 (1.2k)</span>
+        <span style="background:#262d47; padding:0.3rem 1rem; border-radius:50px; color:#b2bdff; font-size:0.75rem;"><i class="fa-regular fa-compass"></i> free returns</span>
+        <span style="background:#262d47; padding:0.3rem 1rem; border-radius:50px; color:#b2bdff; font-size:0.75rem;"><i class="fa-regular fa-credit-card"></i> swipe pay</span>
+      </div>
+      <div class="card-meta">
+        <span class="price-tag"><small>$</small>299 <small>/mo</small></span>
+        <span class="trend"><i class="fa-solid fa-arrow-up"></i> 23% hot</span>
+      </div>
+    </div>
+
+    <!-- action row: nope / like (swipe simulation, but static) -->
+    <div class="swipe-actions">
+      <button class="action-btn nope" aria-label="nope (swipe left)"><i class="fa-solid fa-xmark"></i></button>
+      <button class="action-btn like" aria-label="like (swipe right)"><i class="fa-solid fa-heart"></i></button>
+    </div>
+
+    <!-- deck stack indicator (static) -->
+    <div class="swipe-stack">
+      <i class="fa-regular fa-copy"></i> <span>5 cards left in station</span>
+      <div class="stack-dots">
+        <span class="dot"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <!-- tiny extras (like a "swipe tutorial" hint) -->
+    <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; color: #4a547f; font-size: 0.75rem;">
+      <span><i class="fa-regular fa-hand-back-point-left"></i> nope</span>
+      <span style="color: #98a9ef;"><i class="fa-regular fa-hand-back-point-right"></i> like</span>
+    </div>
+
+    <!-- footer / static watermark -->
+    <div class="footer-note">
+      <i class="fa-regular fa-circle-check"></i> SwipeStation · static concept  <i class="fa-regular fa-compass"></i>
+    </div>
+  </div>
+
+  <!-- subtle pseudo interactivity? it's a static page, but a tiny easter‑egg: click any action to show a "static demo" message (no real swipe) -->
+  <script>
+    (function() {
+      // just a polite nudge — since it's static, we alert that it's UI demo only
+      const buttons = document.querySelectorAll('.action-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const type = btn.classList.contains('like') ? '❤️ liked' : '❌ noped';
+          alert(`[static SwipeStation] You "${type}" this card. (demo interaction — no actual swipe)`);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
